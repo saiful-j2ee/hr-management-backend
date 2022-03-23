@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.example.controller.storage.service.FileStorageService;
 import com.example.model.AddEmployee;
 import com.example.model.ApiResponse;
+import com.example.model.Employee;
 import com.example.model.Status;
 import com.example.reprository.AddEmployeeRepo;
 
@@ -36,9 +37,14 @@ public class AddEmployeeController {
 	ApiResponse res = new ApiResponse();
 	
 	@PostMapping("/save")
-	public ApiResponse save(@RequestBody AddEmployee addEmployee) {
+	public ApiResponse save(@ModelAttribute AddEmployee addEmployee, @RequestParam("file") MultipartFile file) {
 		res.getData().put("employee", addEmployee);
 		try {
+			String fileName = new String();
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
+					.path(fileName).toUriString();
+			addEmployee.setImages(fileName);
+			addEmployee.setImagesUri(fileDownloadUri);
 			
 			addEmployeeRepo.save(addEmployee);
 			res.setMsg("Signup successful !");
